@@ -13,6 +13,7 @@ import {
 } from '../../data/worlds/sortingHat';
 import ScreenReaderStatus from '../../components/common/ScreenReaderStatus';
 import BackButton from '../../components/common/BackButton';
+import ResetButton from '../../components/common/ResetButton';
 
 export default function SortingHatWorld() {
   const navigate = useNavigate();
@@ -21,6 +22,13 @@ export default function SortingHatWorld() {
   const [answers, setAnswers] = useState([]);
   const [result, setResult] = useState(state.worlds.sortingHat.result || null);
   const [statusMsg, setStatusMsg] = useState('');
+
+  const handleReset = () => {
+    setQuestionIndex(0);
+    setAnswers([]);
+    setResult(null);
+    setStatusMsg('');
+  };
 
   const isComplete = state.worlds.sortingHat.status === 'completed';
   const currentQ = QUIZ_QUESTIONS[questionIndex];
@@ -90,6 +98,11 @@ export default function SortingHatWorld() {
       style={{ backgroundColor: 'var(--color-bg)' }}
     >
       <BackButton />
+      <ResetButton
+        worldId="sortingHat"
+        itemId={INVENTORY_ITEMS.sortingHat.id}
+        onReset={handleReset}
+      />
       <Container className="tw:max-w-md">
         <ScreenReaderStatus message={statusMsg} />
 

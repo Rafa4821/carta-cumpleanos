@@ -9,6 +9,7 @@ import { INVENTORY_ITEMS } from '../../data/inventory';
 import { LIBRARY_PAGES } from '../../data/worlds/library';
 import ScreenReaderStatus from '../../components/common/ScreenReaderStatus';
 import BackButton from '../../components/common/BackButton';
+import ResetButton from '../../components/common/ResetButton';
 
 export default function LibraryWorld() {
   const navigate = useNavigate();
@@ -18,6 +19,12 @@ export default function LibraryWorld() {
     state.worlds.library.status === 'completed',
   );
   const [statusMsg, setStatusMsg] = useState('');
+
+  const handleReset = () => {
+    setPageIndex(0);
+    setCompleted(false);
+    setStatusMsg('');
+  };
 
   const page = LIBRARY_PAGES[pageIndex];
   const totalPages = LIBRARY_PAGES.length;
@@ -87,6 +94,11 @@ export default function LibraryWorld() {
       style={{ backgroundColor: '#1a1a2e' }}
     >
       <BackButton />
+      <ResetButton
+        worldId="library"
+        itemId={INVENTORY_ITEMS.library.id}
+        onReset={handleReset}
+      />
       <Container className="tw:max-w-lg">
         <ScreenReaderStatus message={statusMsg} />
 

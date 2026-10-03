@@ -13,10 +13,12 @@ import {
 } from '../../data/worlds/music';
 import ScreenReaderStatus from '../../components/common/ScreenReaderStatus';
 import BackButton from '../../components/common/BackButton';
+import ResetButton from '../../components/common/ResetButton';
 
 export default function MusicWorld() {
   const navigate = useNavigate();
   const { state, dispatch } = useProgress();
+  const [resetKey, setResetKey] = useState(0);
   const [phase, setPhase] = useState(
     state.worlds.music.status === 'completed' ? 'complete' : 'recognition',
   );
@@ -26,6 +28,15 @@ export default function MusicWorld() {
   );
   const [statusMsg, setStatusMsg] = useState('');
   const [showEmbed, setShowEmbed] = useState(null);
+
+  const handleReset = () => {
+    setPhase('recognition');
+    setQIndex(0);
+    setPlaylist([...PLAYLIST_SONGS].sort(() => Math.random() - 0.5));
+    setStatusMsg('');
+    setShowEmbed(null);
+    setResetKey((k) => k + 1);
+  };
 
   const currentQ = MUSIC_QUESTIONS[qIndex];
 
@@ -129,10 +140,15 @@ export default function MusicWorld() {
       style={{ backgroundColor: 'var(--color-bg)' }}
     >
       <BackButton />
+      <ResetButton
+        worldId="music"
+        itemId={INVENTORY_ITEMS.music.id}
+        onReset={handleReset}
+      />
       <Container className="tw:max-w-md">
         <ScreenReaderStatus message={statusMsg} />
 
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" key={resetKey}>
           {phase === 'recognition' && (
             <motion.div
               key={`q-${qIndex}`}

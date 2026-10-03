@@ -11,16 +11,24 @@ import HiddenObjectScene from './HiddenObjectScene';
 import SpellGesture from './SpellGesture';
 import ScreenReaderStatus from '../../components/common/ScreenReaderStatus';
 import BackButton from '../../components/common/BackButton';
+import ResetButton from '../../components/common/ResetButton';
 
 const STAGES = ['hidden-objects', 'trivia', 'spell', 'complete'];
 
 export default function MagicWorld() {
   const navigate = useNavigate();
   const { state, dispatch } = useProgress();
+  const [resetKey, setResetKey] = useState(0);
   const [stage, setStage] = useState(
     state.worlds.magic.status === 'completed' ? 'complete' : STAGES[0],
   );
   const [statusMsg, setStatusMsg] = useState('');
+
+  const handleReset = () => {
+    setStage(STAGES[0]);
+    setStatusMsg('');
+    setResetKey((k) => k + 1);
+  };
 
   const handleObjectsComplete = () => {
     setStage('trivia');
@@ -53,6 +61,11 @@ export default function MagicWorld() {
       }}
     >
       <BackButton />
+      <ResetButton
+        worldId="magic"
+        itemId={INVENTORY_ITEMS.magic.id}
+        onReset={handleReset}
+      />
 
       {/* Progress indicator */}
       {stage !== 'complete' && (
@@ -77,7 +90,7 @@ export default function MagicWorld() {
       <Container className="tw:max-w-3xl">
         <ScreenReaderStatus message={statusMsg} />
 
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" key={resetKey}>
           {stage === 'hidden-objects' && (
             <motion.div
               key="hidden"

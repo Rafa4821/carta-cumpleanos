@@ -153,6 +153,20 @@ export function progressReducer(state, action) {
         },
       };
 
+    case 'RESET_WORLD': {
+      const nextInventory = state.inventory.filter(
+        (id) => id !== action.itemId,
+      );
+      return {
+        ...state,
+        worlds: {
+          ...state.worlds,
+          [action.worldId]: { status: 'idle' },
+        },
+        inventory: nextInventory,
+      };
+    }
+
     case 'RESET':
       return action.initialState;
 
