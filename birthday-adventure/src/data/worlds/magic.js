@@ -62,8 +62,7 @@ export const SCENE_DECORATIONS = [
 
 export const MAGIC_TRIVIA = {
   id: 'patronus-incantation',
-  question:
-    '\u00BFQu\u00E9 encantamiento se utiliza para invocar un Patronus?',
+  question: '\u00BFQu\u00E9 encantamiento se utiliza para invocar un Patronus?',
   options: ['Expecto Patronum', 'Lumos', 'Accio', 'Alohomora'],
   correctAnswer: 'Expecto Patronum',
   sourceLabel: 'HarryPotter.com Official Encyclopedia',

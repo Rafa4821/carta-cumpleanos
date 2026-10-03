@@ -6,6 +6,7 @@ import {
   canAccessLetter,
   canAccessMemories,
   canAccessPhysicalQuest,
+  canAccessDetective,
   canAccessSafe,
   canAccessSortingHat,
   canAccessOpenWorlds,
@@ -25,6 +26,7 @@ const BelieveWorld = lazy(() => import('../games/believe/BelieveWorld'));
 const PhysicalQuestPage = lazy(() => import('../pages/PhysicalQuestPage'));
 const QRValidationPage = lazy(() => import('../pages/QRValidationPage'));
 const MemoriesPage = lazy(() => import('../pages/MemoriesPage'));
+const DetectiveWorld = lazy(() => import('../games/detective/DetectiveWorld'));
 const SafePage = lazy(() => import('../pages/SafePage'));
 const LetterPage = lazy(() => import('../pages/LetterPage'));
 const EpiloguePage = lazy(() => import('../pages/EpiloguePage'));
@@ -87,6 +89,14 @@ export default function AppRouter() {
             element={
               <RouteGuard canAccess={canAccessMemories}>
                 <MemoriesPage />
+              </RouteGuard>
+            }
+          />
+          <Route
+            path="/investigacion"
+            element={
+              <RouteGuard canAccess={canAccessDetective}>
+                <DetectiveWorld />
               </RouteGuard>
             }
           />

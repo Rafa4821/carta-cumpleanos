@@ -14,6 +14,7 @@ import {
 import ScreenReaderStatus from '../../components/common/ScreenReaderStatus';
 import BackButton from '../../components/common/BackButton';
 import ResetButton from '../../components/common/ResetButton';
+import CompletionCelebration from '../../components/common/CompletionCelebration';
 
 export default function MusicWorld() {
   const navigate = useNavigate();
@@ -97,26 +98,19 @@ export default function MusicWorld() {
   if (phase === 'complete') {
     return (
       <div
-        className="tw:min-h-screen tw:flex tw:items-center tw:justify-center tw:px-4"
+        className="tw:min-h-screen tw:flex tw:items-center tw:justify-center tw:px-4 tw:relative"
         style={{ backgroundColor: 'var(--color-bg)' }}
       >
+        <ResetButton
+          worldId="music"
+          itemId={INVENTORY_ITEMS.music.id}
+          onReset={handleReset}
+        />
         <Container className="tw:max-w-md tw:text-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
+          <CompletionCelebration
+            icon={INVENTORY_ITEMS.music.icon}
+            label={`${INVENTORY_ITEMS.music.label} conseguida!`}
           >
-            <div className="tw:text-6xl tw:mb-4">
-              {INVENTORY_ITEMS.music.icon}
-            </div>
-            <h2
-              className="tw:text-3xl tw:mb-4"
-              style={{
-                fontFamily: 'var(--font-display)',
-                color: 'var(--color-gold)',
-              }}
-            >
-              {INVENTORY_ITEMS.music.label} conseguida!
-            </h2>
             <Button
               variant="outline-light"
               size="lg"
@@ -128,7 +122,7 @@ export default function MusicWorld() {
             >
               Volver al mapa
             </Button>
-          </motion.div>
+          </CompletionCelebration>
         </Container>
       </div>
     );
@@ -214,7 +208,68 @@ export default function MusicWorld() {
                   >
                     Correcto! {currentQ.artist} - {currentQ.correctAnswer}
                   </p>
-                  {/* Spotify Embed placeholder - replace PLACEHOLDER URLs with real ones */}
+
+                  {/* Floating notes */}
+                  <div className="tw:flex tw:justify-center tw:gap-4 tw:mb-3">
+                    {['\uD83C\uDFB5', '\uD83C\uDFB6', '\uD83C\uDFB5'].map(
+                      (n, i) => (
+                        <motion.span
+                          key={i}
+                          initial={{ y: 0, opacity: 0.7 }}
+                          animate={{ y: -20, opacity: 0 }}
+                          transition={{
+                            duration: 1.5,
+                            delay: i * 0.3,
+                            repeat: Infinity,
+                          }}
+                          className="tw:text-xl"
+                        >
+                          {n}
+                        </motion.span>
+                      ),
+                    )}
+                  </div>
+
+                  {/* Vinyl + Equalizer row */}
+                  <div className="tw:flex tw:items-center tw:justify-center tw:gap-4 tw:mb-3">
+                    {/* Vinyl record */}
+                    <div
+                      className="tw:w-14 tw:h-14 tw:rounded-full tw:flex tw:items-center tw:justify-center tw:flex-shrink-0"
+                      style={{
+                        background:
+                          'radial-gradient(circle, #333 30%, #111 32%, #222 50%, #111 52%, #1a1a1a 100%)',
+                        animation: 'vinylSpin 2s linear infinite',
+                        boxShadow: '0 0 8px rgba(0,0,0,0.5)',
+                      }}
+                    >
+                      <div
+                        className="tw:w-4 tw:h-4 tw:rounded-full"
+                        style={{
+                          backgroundColor: '#1DB954',
+                          boxShadow: '0 0 4px rgba(29,185,84,0.5)',
+                        }}
+                      />
+                    </div>
+
+                    {/* Equalizer bars */}
+                    <div className="tw:flex tw:items-end tw:gap-0.5 tw:h-10">
+                      {[0, 0.15, 0.3, 0.1, 0.25, 0.2, 0.35, 0.05].map(
+                        (d, i) => (
+                          <div
+                            key={i}
+                            className="tw:w-1.5 tw:rounded-full"
+                            style={{
+                              backgroundColor: '#1DB954',
+                              animation: `eqBounce ${0.5 + d}s ${d}s ease-in-out infinite`,
+                              opacity: 0.7 + d,
+                            }}
+                          />
+                        ),
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Spotify Embed */}
                   {!currentQ.spotifyEmbed.includes('PLACEHOLDER') && (
                     <iframe
                       title={`${currentQ.artist} - ${currentQ.correctAnswer}`}

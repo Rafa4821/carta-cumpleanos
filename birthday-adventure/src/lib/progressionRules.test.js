@@ -6,6 +6,7 @@ import {
   canAccessOpenWorlds,
   canAccessPhysicalQuest,
   canAccessMemories,
+  canAccessDetective,
   canAccessSafe,
   canAccessLetter,
 } from './progressionRules';
@@ -58,10 +59,18 @@ describe('progressionRules', () => {
     expect(canAccessMemories(s)).toBe(true);
   });
 
-  it('canAccessSafe requires photo puzzle completed', () => {
-    expect(canAccessSafe(initialProgress)).toBe(false);
+  it('canAccessDetective requires photo puzzle completed', () => {
+    expect(canAccessDetective(initialProgress)).toBe(false);
     const s = progressReducer(initialProgress, {
       type: 'COMPLETE_PHOTO_PUZZLE',
+    });
+    expect(canAccessDetective(s)).toBe(true);
+  });
+
+  it('canAccessSafe requires detective completed', () => {
+    expect(canAccessSafe(initialProgress)).toBe(false);
+    const s = progressReducer(initialProgress, {
+      type: 'COMPLETE_DETECTIVE',
     });
     expect(canAccessSafe(s)).toBe(true);
   });

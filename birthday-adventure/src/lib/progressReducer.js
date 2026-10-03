@@ -77,6 +77,13 @@ export function progressReducer(state, action) {
       };
     }
 
+    case 'COMPLETE_DETECTIVE':
+      return {
+        ...state,
+        detective: { completed: true },
+        safe: { ...state.safe, unlocked: true },
+      };
+
     case 'VERIFY_PHYSICAL_TOKEN':
       return {
         ...state,
@@ -93,10 +100,6 @@ export function progressReducer(state, action) {
         photoPuzzle: {
           ...state.photoPuzzle,
           completed: true,
-        },
-        safe: {
-          ...state.safe,
-          unlocked: true,
         },
       };
 

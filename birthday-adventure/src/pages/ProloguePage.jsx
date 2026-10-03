@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import Button from 'react-bootstrap/Button';
 
 import FloatingParticles from '../components/common/FloatingParticles';
+import Typewriter from '../components/common/Typewriter';
 
 const STEPS = [
   { text: null, type: 'envelope' },
@@ -17,15 +18,32 @@ const STEPS = [
 
 export default function ProloguePage() {
   const [step, setStep] = useState(0);
+  const [typewriterDone, setTypewriterDone] = useState(false);
+  const [shaking, setShaking] = useState(false);
   const navigate = useNavigate();
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
+    if (step === 0) {
+      /* Shake the envelope on first tap */
+      setShaking(true);
+      setTimeout(() => {
+        setShaking(false);
+        setStep(1);
+        setTypewriterDone(false);
+      }, 600);
+      return;
+    }
+    if (!typewriterDone) {
+      setTypewriterDone(true);
+      return;
+    }
     if (step < STEPS.length - 1) {
       setStep((s) => s + 1);
+      setTypewriterDone(false);
     } else {
       navigate('/aventura');
     }
-  };
+  }, [step, typewriterDone, navigate]);
 
   const current = STEPS[step];
 
@@ -49,33 +67,71 @@ export default function ProloguePage() {
           <motion.div
             key="envelope"
             initial={{ opacity: 0, scale: 0.5, rotate: -10 }}
-            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            animate={{
+              opacity: 1,
+              scale: 1,
+              rotate: shaking ? [0, -8, 8, -6, 6, -3, 0] : 0,
+            }}
             exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.8, type: 'spring', stiffness: 120 }}
+            transition={
+              shaking
+                ? { duration: 0.5, ease: 'easeInOut' }
+                : { duration: 0.8, type: 'spring', stiffness: 120 }
+            }
             className="tw:text-8xl tw:md:text-9xl"
             style={{
               filter: 'drop-shadow(0 0 30px rgba(255,215,0,0.2))',
+              cursor: 'pointer',
             }}
           >
             {'\u2709\uFE0F'}
+            {shaking && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 1, 0] }}
+                transition={{ duration: 0.5 }}
+                className="tw:text-sm tw:mt-2"
+                style={{ color: 'var(--color-accent)' }}
+              >
+                No se puede abrir...
+              </motion.div>
+            )}
           </motion.div>
         )}
 
         {(current.type === 'message' || current.type === 'final') && (
-          <motion.p
+          <motion.div
             key={step}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.5 }}
-            className="tw:text-xl tw:md:text-2xl tw:max-w-lg tw:leading-relaxed"
-            style={{
-              fontFamily: 'var(--font-display)',
-              color: 'var(--color-text)',
-            }}
+            className="tw:max-w-lg"
           >
-            {current.text}
-          </motion.p>
+            {typewriterDone ? (
+              <p
+                className="tw:text-xl tw:md:text-2xl tw:leading-relaxed"
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  color: 'var(--color-text)',
+                }}
+              >
+                {current.text}
+              </p>
+            ) : (
+              <Typewriter
+                text={current.text}
+                speed={45}
+                onComplete={() => setTypewriterDone(true)}
+                as="p"
+                className="tw:text-xl tw:md:text-2xl tw:leading-relaxed"
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  color: 'var(--color-text)',
+                }}
+              />
+            )}
+          </motion.div>
         )}
       </AnimatePresence>
 
@@ -94,9 +150,11 @@ export default function ProloguePage() {
             handleNext();
           }}
         >
-          {step < STEPS.length - 1
-            ? 'Toca para continuar'
-            : 'Comenzar aventura \u2192'}
+          {step === 0
+            ? 'Toca el sobre'
+            : step < STEPS.length - 1
+              ? 'Toca para continuar'
+              : 'Comenzar aventura \u2192'}
         </Button>
       </motion.div>
 

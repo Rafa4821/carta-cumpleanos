@@ -24,8 +24,12 @@ export function canAccessMemories(state) {
   return state.physicalQuest.tokenVerified;
 }
 
-export function canAccessSafe(state) {
+export function canAccessDetective(state) {
   return state.photoPuzzle.completed;
+}
+
+export function canAccessSafe(state) {
+  return state.detective?.completed;
 }
 
 export function canAccessLetter(state) {

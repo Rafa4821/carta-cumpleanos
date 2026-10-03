@@ -12,7 +12,8 @@ export const LOCKER_ITEMS = [
     radius: 12,
     label: 'Tactics board',
     emoji: '\uD83D\uDCCB',
-    quote: 'Taking on a challenge is a lot like riding a horse. If you\u2019re comfortable while you\u2019re doing it, you\u2019re probably doing it wrong.',
+    quote:
+      'Taking on a challenge is a lot like riding a horse. If you\u2019re comfortable while you\u2019re doing it, you\u2019re probably doing it wrong.',
     speaker: 'Ted Lasso',
   },
   {
@@ -52,7 +53,8 @@ export const LOCKER_ITEMS = [
     radius: 9,
     label: 'BELIEVE sign',
     emoji: '\uD83D\uDCCC',
-    quote: 'I think that you might be so sure that you\u2019re one in a million, that sometimes you forget that out there you\u2019re also just one of 11.',
+    quote:
+      'I think that you might be so sure that you\u2019re one in a million, that sometimes you forget that out there you\u2019re also just one of 11.',
     speaker: 'Ted Lasso',
   },
 ];

@@ -475,7 +475,7 @@ function PenaltyGame({ onComplete }) {
           )}
         </AnimatePresence>
 
-        {/* Confetti on goal */}
+        {/* Confetti + crowd wave on goal */}
         <AnimatePresence>
           {showConfetti && (
             <>
@@ -507,6 +507,43 @@ function PenaltyGame({ onComplete }) {
                   }}
                 />
               ))}
+              {/* Crowd wave */}
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  gap: '2px',
+                  pointerEvents: 'none',
+                  zIndex: 14,
+                }}
+              >
+                {Array.from({ length: 16 }, (_, i) => (
+                  <motion.span
+                    key={i}
+                    initial={{ y: 0 }}
+                    animate={{ y: [0, -8, 0] }}
+                    transition={{
+                      duration: 0.4,
+                      delay: i * 0.06,
+                      repeat: 3,
+                    }}
+                    style={{
+                      fontSize: '14px',
+                      opacity: 0.7,
+                    }}
+                  >
+                    {i % 3 === 0
+                      ? '\uD83D\uDE4C'
+                      : i % 3 === 1
+                        ? '\uD83D\uDC4F'
+                        : '\uD83C\uDF89'}
+                  </motion.span>
+                ))}
+              </div>
             </>
           )}
         </AnimatePresence>
@@ -934,10 +971,40 @@ export default function BelieveWorld() {
             'radial-gradient(ellipse at 50% 30%, rgba(20,184,166,0.15) 0%, transparent 60%), var(--color-bg)',
         }}
       >
+        <ResetButton
+          worldId="believe"
+          itemId={INVENTORY_ITEMS.believe.id}
+          onReset={handleReset}
+        />
         <Container className="tw:max-w-md tw:text-center">
+          {/* BELIEVE banner */}
+          <motion.div
+            initial={{ scaleX: 0, opacity: 0 }}
+            animate={{ scaleX: 1, opacity: 1 }}
+            transition={{ duration: 0.8, type: 'spring', stiffness: 120 }}
+            className="tw:mb-8 tw:py-4 tw:px-6 tw:rounded-lg tw:mx-auto"
+            style={{
+              background: 'linear-gradient(135deg, #f1c40f 0%, #f39c12 100%)',
+              maxWidth: '320px',
+              boxShadow: '0 4px 20px rgba(241,196,15,0.3)',
+            }}
+          >
+            <h1
+              className="tw:text-4xl tw:font-bold tw:tracking-widest tw:m-0"
+              style={{
+                color: '#1a1a2e',
+                fontFamily: 'var(--font-display)',
+                letterSpacing: '0.15em',
+              }}
+            >
+              BELIEVE
+            </h1>
+          </motion.div>
+
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.5 }}
           >
             <div className="tw:text-6xl tw:mb-4">
               {INVENTORY_ITEMS.believe.icon}

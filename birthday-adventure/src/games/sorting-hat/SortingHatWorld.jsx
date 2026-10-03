@@ -21,12 +21,14 @@ export default function SortingHatWorld() {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState([]);
   const [result, setResult] = useState(state.worlds.sortingHat.result || null);
+  const [thinking, setThinking] = useState(false);
   const [statusMsg, setStatusMsg] = useState('');
 
   const handleReset = () => {
     setQuestionIndex(0);
     setAnswers([]);
     setResult(null);
+    setThinking(false);
     setStatusMsg('');
   };
 
@@ -41,19 +43,24 @@ export default function SortingHatWorld() {
     if (questionIndex < QUIZ_QUESTIONS.length - 1) {
       setQuestionIndex((i) => i + 1);
     } else {
+      /* Show thinking animation before revealing result */
+      setThinking(true);
       const { archetype } = calculateArchetype(nextAnswers);
-      setResult(archetype);
-      dispatch({
-        type: 'SET_WORLD_DATA',
-        worldId: 'sortingHat',
-        payload: { result: archetype },
-      });
-      dispatch({
-        type: 'COMPLETE_WORLD',
-        worldId: 'sortingHat',
-        itemId: INVENTORY_ITEMS.sortingHat.id,
-      });
-      setStatusMsg('Ceremonia completada!');
+      setTimeout(() => {
+        setResult(archetype);
+        setThinking(false);
+        dispatch({
+          type: 'SET_WORLD_DATA',
+          worldId: 'sortingHat',
+          payload: { result: archetype },
+        });
+        dispatch({
+          type: 'COMPLETE_WORLD',
+          worldId: 'sortingHat',
+          itemId: INVENTORY_ITEMS.sortingHat.id,
+        });
+        setStatusMsg('Ceremonia completada!');
+      }, 3000);
     }
   };
 
@@ -61,9 +68,14 @@ export default function SortingHatWorld() {
     const arch = ARCHETYPES[result];
     return (
       <div
-        className="tw:min-h-screen tw:py-12 tw:px-4"
+        className="tw:min-h-screen tw:py-12 tw:px-4 tw:relative"
         style={{ backgroundColor: 'var(--color-bg)' }}
       >
+        <ResetButton
+          worldId="sortingHat"
+          itemId={INVENTORY_ITEMS.sortingHat.id}
+          onReset={handleReset}
+        />
         <Container className="tw:max-w-md tw:text-center">
           <div className="tw:text-6xl tw:mb-4">
             {INVENTORY_ITEMS.sortingHat.icon}
@@ -107,7 +119,56 @@ export default function SortingHatWorld() {
         <ScreenReaderStatus message={statusMsg} />
 
         <AnimatePresence mode="wait">
-          {!showResult ? (
+          {thinking ? (
+            <motion.div
+              key="thinking"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="tw:text-center tw:mt-16"
+            >
+              <motion.div
+                animate={{
+                  rotate: [0, -5, 5, -3, 3, 0],
+                  scale: [1, 1.05, 0.95, 1.03, 0.97, 1],
+                }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+                className="tw:text-7xl tw:mb-6"
+              >
+                {INVENTORY_ITEMS.sortingHat.icon}
+              </motion.div>
+              <motion.p
+                animate={{ opacity: [0.4, 1, 0.4] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+                className="tw:text-xl tw:italic"
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  color: 'var(--color-gold)',
+                }}
+              >
+                Mmm... interesante... d&eacute;jame pensar...
+              </motion.p>
+              <div className="tw:flex tw:justify-center tw:gap-1 tw:mt-4">
+                {[0, 0.2, 0.4].map((d) => (
+                  <motion.div
+                    key={d}
+                    animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }}
+                    transition={{
+                      duration: 0.8,
+                      delay: d,
+                      repeat: Infinity,
+                    }}
+                    className="tw:w-2 tw:h-2 tw:rounded-full"
+                    style={{ backgroundColor: 'var(--color-gold)' }}
+                  />
+                ))}
+              </div>
+            </motion.div>
+          ) : !showResult ? (
             <motion.div
               key={questionIndex}
               initial={{ opacity: 0, x: 30 }}

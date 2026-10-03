@@ -56,6 +56,10 @@ export const initialProgress = {
     moves: 0,
   },
 
+  detective: {
+    completed: false,
+  },
+
   safe: {
     unlocked: false,
     completed: false,

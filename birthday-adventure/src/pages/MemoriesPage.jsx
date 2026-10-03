@@ -245,7 +245,7 @@ export default function MemoriesPage() {
             <Button
               variant="outline-light"
               size="lg"
-              onClick={() => navigate('/caja-fuerte')}
+              onClick={() => navigate('/investigacion')}
               style={{
                 borderColor: 'var(--color-gold)',
                 color: 'var(--color-gold)',

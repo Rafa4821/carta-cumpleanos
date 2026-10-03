@@ -4,6 +4,10 @@ import Button from 'react-bootstrap/Button';
 
 import { SPELL_ALTERNATIVE_SEQUENCE } from '../../data/worlds/magic';
 
+/* Particle trail */
+const MAX_PARTICLES = 30;
+let particleId = 0;
+
 function seedShuffle(arr, seed) {
   const copy = [...arr];
   let s = seed;
@@ -64,11 +68,13 @@ export default function SpellGesture({ onComplete }) {
   const [showAlt, setShowAlt] = useState(false);
   const [altProgress, setAltProgress] = useState([]);
   const [result, setResult] = useState(null);
+  const [particles, setParticles] = useState([]);
 
   const startDraw = useCallback((e) => {
     e.preventDefault();
     setDrawing(true);
     setPoints([]);
+    setParticles([]);
     setResult(null);
   }, []);
 
@@ -79,6 +85,26 @@ export default function SpellGesture({ onComplete }) {
       const clientX = e.touches ? e.touches[0].clientX : e.clientX;
       const clientY = e.touches ? e.touches[0].clientY : e.clientY;
       setPoints((prev) => [...prev, { x: clientX, y: clientY }]);
+
+      /* Spawn sparkle particle at SVG-normalized coords */
+      const rect = svgRef.current?.getBoundingClientRect();
+      if (rect) {
+        const sx = ((clientX - rect.left) / rect.width) * 400;
+        const sy = ((clientY - rect.top) / rect.height) * 300;
+        const colors = ['#ffd700', '#b794f4', '#fff', '#f0c0ff'];
+        setParticles((prev) =>
+          [
+            ...prev,
+            {
+              id: particleId++,
+              sx,
+              sy,
+              size: 2 + (particleId % 5),
+              color: colors[particleId % 4],
+            },
+          ].slice(-MAX_PARTICLES),
+        );
+      }
     },
     [drawing],
   );
@@ -245,6 +271,21 @@ export default function SpellGesture({ onComplete }) {
               Traza tu hechizo aqui
             </text>
           )}
+
+          {/* Sparkle particle trail */}
+          {particles.map((p, i) => {
+            const age = (i + 1) / particles.length;
+            return (
+              <circle
+                key={p.id}
+                cx={p.sx}
+                cy={p.sy}
+                r={p.size * age}
+                fill={p.color}
+                opacity={age * 0.7}
+              />
+            );
+          })}
 
           {/* Drawing trace */}
           {pathD && (

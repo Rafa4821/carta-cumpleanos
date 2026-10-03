@@ -62,11 +62,18 @@ describe('progressReducer', () => {
     expect(next.physicalQuest.verifiedAt).toBeTypeOf('number');
   });
 
-  it('completes photo puzzle and unlocks safe', () => {
+  it('completes photo puzzle', () => {
     const next = progressReducer(initialProgress, {
       type: 'COMPLETE_PHOTO_PUZZLE',
     });
     expect(next.photoPuzzle.completed).toBe(true);
+  });
+
+  it('completes detective and unlocks safe', () => {
+    const next = progressReducer(initialProgress, {
+      type: 'COMPLETE_DETECTIVE',
+    });
+    expect(next.detective.completed).toBe(true);
     expect(next.safe.unlocked).toBe(true);
   });
 
